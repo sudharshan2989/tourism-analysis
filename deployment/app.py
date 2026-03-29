@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from huggingface_hub import login
+from huggingface_hub import hf_hub_download
+from huggingface_hub import login, HfApi
 
 
 # Download and load the trained model

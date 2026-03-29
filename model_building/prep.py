@@ -1,0 +1,29 @@
+
+## Lets drop the ids and separate features and target
+X = df_hf_copy.drop(columns=["ProdTaken", "CustomerID", "Unnamed: 0"])
+y = df_hf_copy["ProdTaken"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42
+)
+## Startified sampling ensures that the class distribution in the train and test sets is similar to the original dataset.
+
+print("Train size:", X_train.shape, "Test size:", X_test.shape)
+print("Class distribution in train:", y_train.value_counts())
+print("Class distribution in test:", y_test.value_counts())
+
+## Uploading the train and test files to Hugging Face Hub
+X_train.to_csv("Xtrain.csv",index=False)
+X_test.to_csv("Xtest.csv",index=False)
+y_train.to_csv("ytrain.csv",index=False)
+y_test.to_csv("ytest.csv",index=False)
+
+files = ["Xtrain.csv","Xtest.csv","ytrain.csv","ytest.csv"]
+
+for file_path in files:
+    api.upload_file(
+        path_or_fileobj=file_path,
+        path_in_repo=file_path.split("/")[-1],  # just the filename
+        repo_id="sudharshanc/tourism-analysis",
+        repo_type="dataset",
+    )

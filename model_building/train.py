@@ -1,5 +1,25 @@
-## Download the train and test files from Hugging Face Hub
+import pandas as pd
+from huggingface_hub import login
 from huggingface_hub import hf_hub_download
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+# for data preprocessing and pipeline creation
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder, OrdinalEncoder
+from sklearn.compose import make_column_transformer, ColumnTransformer
+from sklearn.pipeline import make_pipeline
+# for model training, tuning, and evaluation
+import xgboost as xgb
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, accuracy_score
+
+
+# for model serialization
+import joblib
+
 
 # Define repo and filenames
 repo_id = "sudharshanc/tourism-analysis"
@@ -124,4 +144,3 @@ with mlflow.start_run():
         "train_f1": train_f1,
         "test_f1": test_f1
     })
-

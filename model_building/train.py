@@ -18,6 +18,20 @@ from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_sco
 # for model serialization
 import joblib
 
+# for hugging face space authentication to upload files
+from huggingface_hub import login, HfApi, create_repo
+from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
+import mlflow
+
+
+HF_TOKEN = os.getenv("HF_TOKEN")
+# Initialize API client
+api = HfApi(token=HF_TOKEN)
+
+
+mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_experiment("mlops-training-experiment")
+
 
 # Define repo and filenames
 repo_id = "sudharshanc/tourism-analysis"

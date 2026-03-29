@@ -1,23 +1,35 @@
-# Use a minimal base image with Python 3.9 installed
-FROM python:3.9
+# Use Python 3.11 slim (better wheel support than 3.13) 
+FROM python:3.11-slim
+
 
 # Set the working directory inside the container to /app
 WORKDIR /app
 
-# Copy all files from the current directory on the host to the container's /app directory
-COPY . .
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt ./
+
+# Upgrade pip, setuptools, and wheel to ensure latest wheel handling
+RUN pip install --upgrade pip setuptools wheel
 
 # Install Python dependencies listed in requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-RUN useradd -m -u 1000 user
-USER user
-ENV HOME=/home/user \
-	PATH=/home/user/.local/bin:$PATH
 
-WORKDIR $HOME/app
+COPY src/ ./src/
 
-COPY --chown=user . $HOME/app
+# Expose Streamlit default port
+EXPOSE 8501
 
-# Define the command to run the Streamlit app on port "8501" and make it accessible externally
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.enableXsrfProtection=false"]
+# Add healthcheck for container monitoring
+HEALTHCHECK CMD curl --fail http://localhost:7860/_stcore/health || exit 1
+
+# Run the Streamlit app
+ENTRYPOINT ["streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.enableXsrfProtection=false"]
+
+# NOTE: Disable XSRF protection for easier external access in order to make batch predictions

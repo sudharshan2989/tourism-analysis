@@ -1,7 +1,15 @@
+from huggingface_hub import hf_hub_download
+
+# Define repo and filenames
+repo_id = "sudharshanc/tourism-analysis"
+
+csv_path = hf_hub_download(repo_id=repo_id,repo_type="dataset", filename="tourism.csv")
+# Read the CSV into a DataFrame
+df_hf_main = pd.read_csv(csv_path)
 
 ## Lets drop the ids and separate features and target
-X = df_hf_copy.drop(columns=["ProdTaken", "CustomerID", "Unnamed: 0"])
-y = df_hf_copy["ProdTaken"]
+X = df_hf_main.drop(columns=["ProdTaken", "CustomerID", "Unnamed: 0"])
+y = df_hf_main["ProdTaken"]
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, stratify=y, random_state=42
